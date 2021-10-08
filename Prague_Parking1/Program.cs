@@ -80,7 +80,7 @@ namespace Prague_Parking1
                 }
             }
         }
-        
+
         public static void AddVehicle()
         {
             Console.Clear();
@@ -91,11 +91,11 @@ namespace Prague_Parking1
                 Console.WriteLine("No valid input.");
                 return;
             }
-            
+
             //kollar så att inte regnumret redan finns när man lägger till fordon, finns det inte får jag tillbaks -1
-            int isValidInput = SearchVehicle(regNumber);
-            
-            if(isValidInput != -1)
+            int doesVehicleExist = SearchVehicle(regNumber);
+
+            if (doesVehicleExist != -1)
             {
                 Console.WriteLine("Vehicle already parked.");
                 return;
@@ -110,7 +110,7 @@ namespace Prague_Parking1
                 Console.Clear();
                 Console.WriteLine("Now specify what type of vehilce by simply typing in" +
                  " \"car\" or \"mc\"");
-                vehicleType = Console.ReadLine().ToUpper();  
+                vehicleType = Console.ReadLine().ToUpper();
 
                 if (vehicleType == "CAR")
                 {
@@ -134,7 +134,7 @@ namespace Prague_Parking1
 
             } while (vehicleType != "CAR" || vehicleType != "MC");
         }
-        
+
         public static void AddMc(string regNumber)
         {
             string mc = regNumber.Insert(0, "MC#");
@@ -159,7 +159,7 @@ namespace Prague_Parking1
             }
             Console.WriteLine("The parkinglot is full, unfortunately");
         }
-        
+
         public static void AddCar(string regNumber)
         {
             for (int i = 0; i < parkingSpots.Length; i++)
@@ -178,16 +178,17 @@ namespace Prague_Parking1
         // flyttar fordon
         public static void Move()
         {
-            Console.WriteLine("Reg number of vehicle to move");
+            Console.WriteLine("Type in registrationnumber of vehicle to move");
             string regNumber = Console.ReadLine().ToUpper();
-
             // metoden SearchVehicle tar fram index där regnumret står
             int vehiclePlaced = SearchVehicle(regNumber);
 
             // kollar ifall det finns i arrayen, finns det inte ger min metod tillbaks -1
             if (vehiclePlaced == -1) { Console.WriteLine("Vehcile not found"); return; }
-            
-            Console.WriteLine("Give me the position you'd like to move too.");
+            //tar fram hela fordenet med fordonstyp
+            string identifier = IdentifyVehicleType(regNumber, vehiclePlaced);
+
+            Console.WriteLine("Give me the position \"(1-100)\" you'd like to move too.");
 
             int pos = 0;
             try
@@ -202,105 +203,130 @@ namespace Prague_Parking1
                     "you'd like to move your vehicle too.");
                 return;
             }
-            //hindrar en efterbliven användare från att försöka parkera på samma plats
+            //hindrar användare från att försöka parkera på samma plats som den redan står
             if (pos - 1 == vehiclePlaced) { Console.Clear(); Console.WriteLine("You are already on that spot. Try again"); return; }
 
-            // kollar ifall platsen fordonet vi vill flytta på innehåller en bil 
-            if (parkingSpots[vehiclePlaced] == "CAR#" + regNumber)// || parkingSpots[vehiclePlaced] == "MC#" + regNumber)
+            //flytta bil
+            if (parkingSpots[vehiclePlaced].Contains("CAR#"))
             {
-                if (IsSpotEmpty(pos - 1) == false) { Console.WriteLine("Spot taken"); return; }
-                
-                string placeHolder = parkingSpots[vehiclePlaced];
-                parkingSpots[vehiclePlaced] = null;
-                parkingSpots[pos - 1] = placeHolder;
-                Console.WriteLine("Moved to position " + pos);
-                return;
-            }
-            // kollar ifall platsen fordonet vi vill flytta på innehåller en ensam mc
-            else if (parkingSpots[vehiclePlaced] == "MC#" + regNumber)
-            {
-                if(IsSpotEmpty(pos - 1) == false)
+                if (EmptySpot(pos - 1) == true)
                 {
-                    Console.WriteLine("Checking for double parking...");
-                    if(parkingSpots[pos - 1] != null && parkingSpots[pos - 1].Contains("MC#") && !parkingSpots[pos - 1].Contains("|"))
+                    parkingSpots[pos - 1] = identifier;
+                    parkingSpots[vehiclePlaced] = null;
+                    Console.WriteLine("Moved your from parkingwindow {0} -> {1}", vehiclePlaced + 1, pos);
+                    return;
+                }
+                else
+                {
+                    Console.WriteLine("No room to park there. Try another spot.");
+                    return;
+                }
+            }
+            //flytta ensamstående mc
+            else if (parkingSpots[vehiclePlaced] == identifier)
+            {
+                //kolla om platsen att flytta till är tom
+                if (EmptySpot(pos - 1) == true)
+                {
+                    parkingSpots[pos - 1] = identifier;
+                    parkingSpots[vehiclePlaced] = null;
+                    Console.WriteLine("Moved your from parkingwindow {0} -> {1}", vehiclePlaced + 1, pos);
+                    return;
+                }
+                //kolla om en till mc får plats på platsen vi vill stå
+                else if (VehicleFitsInParkingSpace(pos - 1) == true)
+                {
+                    parkingSpots[pos - 1] += "|" + identifier;
+                    parkingSpots[vehiclePlaced] = null;
+                    Console.WriteLine("Moved your from parkingwindow {0} -> {1}", vehiclePlaced + 1, pos);
+                    return;
+                }
+                Console.WriteLine("No room to park there. Try another spot.");
+                return;
+
+            }
+            //flytta en mc som står dubbelparkerad
+            else if (parkingSpots[vehiclePlaced] != null && parkingSpots[vehiclePlaced].Contains("|"))
+            {
+                string[] temp = parkingSpots[vehiclePlaced].Split('|');
+                
+                //kolla om platsen vi vill stå på är tom
+                if (EmptySpot(pos - 1) == true)
+                {
+                    parkingSpots[pos - 1] = identifier;
+                    //kollar vilket av elementen i den splittade arrayen som matchar värdet vi vill flytta på
+                    //och skriv över platsen den tidigare stod på med de andra värdet
+                    if (temp[0] == identifier)
                     {
-                        string placeHolder = parkingSpots[vehiclePlaced];
-                        parkingSpots[vehiclePlaced] = null;
-                        parkingSpots[pos - 1] += "|" + placeHolder;
-                        Console.WriteLine("Doubleparking was successful.");
-                        return;
+                        parkingSpots[vehiclePlaced] = temp[1];
+                    }
+                    else if (temp[1] == identifier)
+                    {
+                        parkingSpots[vehiclePlaced] = temp[0];
+                    }
+                    Console.WriteLine("Moved your from parkingwindow {0} -> {1}", vehiclePlaced + 1, pos);
+                }
+                //kolla om en till mc får plats på platsen vi vill stå
+                else if (VehicleFitsInParkingSpace(pos - 1) == true)
+                {
+                    //lägger till ett skiljetecken och värdet vi vill flytta på, till platsen vi flyttar till
+                    parkingSpots[pos - 1] += "|" + identifier;
+
+                    //samma som ovan skriver jag över platsen fordonet vi flyttade på, till det andra värdet som stod där innan
+                    if (temp[0] == identifier)
+                    {
+                        parkingSpots[vehiclePlaced] = temp[1];
                     }
                     else
                     {
-                        Console.WriteLine("Cant park there");
-                    }
-                }
-                else
-                {
-                    string placeHolder = parkingSpots[vehiclePlaced];
-                    parkingSpots[vehiclePlaced] = null;
-                    parkingSpots[pos - 1] = placeHolder;
-                    Console.WriteLine("Your vehicle has been moved to parkingwindow: {0}", pos);
-                }
-                
-            }
-            // annars kollar jag ifall vi på samma plats hittar "substrängen av regnumret, isåfall är det dubbelparkerad mc
-            // och då behöver jag splitta för att kolla hela fordonens "värde"
-            else if (parkingSpots[vehiclePlaced] != null && parkingSpots[vehiclePlaced].Contains(regNumber))
-            {
-                string[] temp = parkingSpots[vehiclePlaced].Split("|");
-                string mcPlaceHolder = "";
-                
-                if(IsSpotEmpty(pos - 1) == false)
-                {
-                    Console.WriteLine("Checking for double parking...");
-                    if (parkingSpots[pos - 1] != null && parkingSpots[pos - 1].Contains("MC#") && !parkingSpots[pos - 1].Contains("|"))
-                    {
-                        if (temp[0] == "MC#" + regNumber)
-                        {
-                            mcPlaceHolder = temp[0];
-                            parkingSpots[vehiclePlaced] = temp[1];
-                            parkingSpots[pos - 1] += "|" + mcPlaceHolder;
-                        }
-                        if (temp[1] == "MC#" + regNumber)
-                        {
-                            mcPlaceHolder = temp[1];
-                            parkingSpots[vehiclePlaced] = temp[0];
-                            parkingSpots[pos - 1] += "|" + mcPlaceHolder;
-                        }
-                        Console.WriteLine("Doubleparking was successful. Please proceed to parkingwindow: {0}", pos);
-                    }
-                }
-                else
-                {
-                    if (temp[0] == "MC#" + regNumber)
-                    {
-                        mcPlaceHolder = temp[0];
-                        parkingSpots[vehiclePlaced] = temp[1];
-                        parkingSpots[pos - 1] = mcPlaceHolder;
-                    }
-                    else if (temp[1] == "MC#" + regNumber)
-                    {
-                        mcPlaceHolder = temp[1];
                         parkingSpots[vehiclePlaced] = temp[0];
-                        parkingSpots[pos - 1] = mcPlaceHolder;
                     }
-                    Console.WriteLine("Moved to parkingwindow: {0}", pos);
-                    
-                }  
+                    Console.WriteLine("Moved your from parkingwindow {0} -> {1}", vehiclePlaced + 1, pos);
+                }
+                else
+                {
+                    Console.WriteLine("No room to park your vehicle there.");
+                }
             }
         }
         
+        public static bool VehicleFitsInParkingSpace(int index)
+        {
+            if (parkingSpots[index] != null && !parkingSpots[index].Contains("|") && !parkingSpots[index].Contains("CAR#"))
+            {
+                return true;
+            }
+            return false;
+        }
+        
+        public static string IdentifyVehicleType(string regNumber, int index)
+        {
+            if (parkingSpots[index] == "CAR#" + regNumber || parkingSpots[index] == "MC#" + regNumber)
+            {
+                return parkingSpots[index];
+            }
+            else if (parkingSpots[index] != null && parkingSpots[index].Contains("|"))
+            {
+                string[] temp = parkingSpots[index].Split('|');
+                if (temp[0] == "MC#" + regNumber)
+                {
+                    return temp[0];
+                }
+                return temp[1];
+            }
+            return "";
+        }
+
         public static void DoubleParkAllMc(string[] array)
         {
             //Vi går igenom arrayen med en low och high pointer, som båda fortsätter gå inåt i ledet tills de "möts"
             int low = 0;
             int high = array.Length - 1;
 
-            while(low < high)
+            while (low < high)
             {
                 //letar efter en ensamstående mc från början av arrayen, hittar vi inte det så flyttar jag pointern inåt(se else)
-                if(array[low] != null && array[low].Contains("MC#") && !array[low].Contains("|"))
+                if (array[low] != null && array[low].Contains("MC#") && !array[low].Contains("|"))
                 {
                     //letar efter en ensamstående mc från slutet av arrayen, hittar jag en ensamstående mc här så tar jag det "värdet",
                     //och "lägger på" det med ett skiljetecken där vi hittade en ensam mc på low-pointern
@@ -312,7 +338,7 @@ namespace Prague_Parking1
                         array[high] = null;
                         array[low] = tempLow + "|" + tempHigh;
                     }
-                    else 
+                    else
                     {
                         high--;
                     }
@@ -323,9 +349,9 @@ namespace Prague_Parking1
                 }
             }
         }
-        
+
         // flyttar ihop alla singelparkerade mc (använder inte, men har kvar den för den var "lite listig")
-        public static void OptimizeDoubleParking() 
+        public static void OptimizeDoubleParking()
         {
             //hittar alla tomma mc, och hanterar dem som nya fordon
             for (int i = 0; i < parkingSpots.Length; i++)
@@ -336,10 +362,10 @@ namespace Prague_Parking1
                     parkingSpots[i] = null;
                     AddMc(temp);
                     Console.Clear();
-                    
+
                 }
             }
-            
+
             Console.WriteLine("Successfully double-parked as many motorcycles as possible!");
             Console.ReadKey();
         }
@@ -349,26 +375,26 @@ namespace Prague_Parking1
         {
             for (int i = 0; i < parkingSpots.Length; i++)
             {
-                if (parkingSpots[i] == "MC#" + regNumber || parkingSpots[i] == "CAR#" + regNumber) 
+                if (parkingSpots[i] == "MC#" + regNumber || parkingSpots[i] == "CAR#" + regNumber)
                 {
                     return i;
                 }
                 // dubbelparkering = söker efter en substring av regnummer
                 //hittar jag substrängen av regnummer så måste jag splitta båda motorcyklarna från skiljetecknet, i en temporär array 
                 //för att kunna kolla hela "värdet"
-                else if (parkingSpots[i] != null && parkingSpots[i].Contains("MC#" + regNumber) && parkingSpots[i].Contains("|"))                                                                              
+                else if (parkingSpots[i] != null && parkingSpots[i].Contains("MC#" + regNumber) && parkingSpots[i].Contains("|"))
                 {
                     string[] temp = parkingSpots[i].Split('|');
-                    
-                    if(temp[0] == "MC#" + regNumber) 
+
+                    if (temp[0] == "MC#" + regNumber)
                     {
                         return i;
                     }
-                    else if(temp[1] == "MC#" + regNumber)
+                    else if (temp[1] == "MC#" + regNumber)
                     {
                         return i;
                     }
-                    
+
                 }
             }
             return -1;
@@ -390,7 +416,7 @@ namespace Prague_Parking1
         }
 
         // kollar ifall angiven parkeringsplats är ledig
-        public static bool IsSpotEmpty(int pos)//, string regNumber)
+        public static bool EmptySpot(int pos)//, string regNumber)
         {
             if (parkingSpots[pos] == null)
             {
@@ -399,7 +425,7 @@ namespace Prague_Parking1
             //else if()
             return false;
         }
-        
+
         // tar bort specifikt fordon
         public static void RemoveVehicle()
         {
@@ -420,7 +446,7 @@ namespace Prague_Parking1
             else if (parkingSpots[regPos] != null && parkingSpots[regPos].Contains(regNumber))
             {
                 string[] temp = parkingSpots[regPos].Split("|");
-                
+
                 if (temp[0] == "MC#" + regNumber)
                 {
                     parkingSpots[regPos] = temp[1];
@@ -434,7 +460,7 @@ namespace Prague_Parking1
                 return;
             }
         }
-        
+
         // skriver ut fordon som står parkerade
         public static void Print()
         {
