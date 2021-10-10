@@ -83,7 +83,6 @@ namespace Prague_Parking1
             }
         }
 
-        
         public static void AddVehicle()
         {
             Console.Clear();
@@ -141,7 +140,6 @@ namespace Prague_Parking1
             } while (vehicleType != "1" || vehicleType != "2");
         }
 
-        
         public static void AddMc(string regNumber)
         {
             string mc = regNumber.Insert(0, "MC#");
@@ -167,7 +165,6 @@ namespace Prague_Parking1
             Console.WriteLine("The parkinglot is full, unfortunately");
         }
 
-        
         public static void AddCar(string regNumber)
         {
             
@@ -223,7 +220,7 @@ namespace Prague_Parking1
             //flytta ensamstående mc eller bil
             if (parkingSpots[vehiclePosition] == identifier)
             {
-                //kolla om platsen att flytta till är tom
+                //kolla om platsen att flytta till är tom, är den det returnerar vi true
                 if (EmptySpot(pos - 1) == true)
                 {
                     parkingSpots[pos - 1] = identifier;
@@ -231,7 +228,7 @@ namespace Prague_Parking1
                     Console.WriteLine("Your vehicle has been moved from parkingwindow {0} -> {1}", vehiclePosition + 1, pos);
                     return;
                 }
-                //kolla om en till mc får plats på platsen vi vill stå, då får identifieraren inte innehålla fordonsbeteckningen för bil
+                //är emptypos flase, kollar jag om en till mc får plats på platsen vi vill stå, då får identifieraren inte innehålla fordonsbeteckningen för bil
                 else if (CheckForDoubleParkingMc(pos - 1) == true && !identifier.Contains("CAR#"))
                 {
                     parkingSpots[pos - 1] += "|" + identifier;
@@ -239,7 +236,7 @@ namespace Prague_Parking1
                     Console.WriteLine("Your vehicle has been moved from parkingwindow {0} -> {1}", vehiclePosition + 1, pos);
                     return;
                 }
-                Console.WriteLine("No room to park there. Try another spot.");
+                Console.WriteLine("No room to park there. Try another spot."); /// -> om det inte får plats
                 return;
             }
             //flytta en mc som står dubbelparkerad
@@ -286,7 +283,6 @@ namespace Prague_Parking1
             }
         }
 
-        
         // search - user interaction
         public static void Search()
         {
@@ -294,9 +290,9 @@ namespace Prague_Parking1
             Art();
             Console.Write("Give me a registration number to look for: ");
             string regNumber = Console.ReadLine().ToUpper();
-            int temp = SearchVehicle(regNumber);
+            int temp = SearchVehicle(regNumber); //testar regnummer och returnerar index
 
-            if (temp == -1)
+            if (temp == -1) //kollar så att regnummret finns
             {
                 Console.WriteLine("{0} was not found", regNumber);
                 return;
@@ -304,13 +300,12 @@ namespace Prague_Parking1
             Console.WriteLine("Vehicle with registration number {0} was found at spot: {1}", regNumber, temp + 1);
         }
         
-        
         // search logic, returnerar index där ett visst fordon står
         public static int SearchVehicle(string regNumber)
         {
             for (int i = 0; i < parkingSpots.Length; i++)
             {
-                if (parkingSpots[i] == "MC#" + regNumber || parkingSpots[i] == "CAR#" + regNumber)
+                if (parkingSpots[i] == "MC#" + regNumber || parkingSpots[i] == "CAR#" + regNumber) //letar efter ensamstående fordon
                 {
                     return i;
                 }
@@ -334,7 +329,6 @@ namespace Prague_Parking1
             return -1;
         }
         
-        
         // kollar ifall angiven parkeringsplats är tom
         public static bool EmptySpot(int pos)//, string regNumber)
         {
@@ -356,7 +350,6 @@ namespace Prague_Parking1
             return false;
         }
         
-        
         //returnerar hela regnumret med fordonstyp ex. "CAR#ABC123" eller "MC#ABC321" som står på ett visst index
         public static string IdentifyVehicleType(string regNumber, int index)
         {
@@ -376,7 +369,6 @@ namespace Prague_Parking1
             return "";
         }
 
-       
         //ena "brute force" metoden för att optimera motorcyklar, som både söker efter ensamma MC, och slänger ihop dem(använder ej)
         public static void OptimizeMotorcycles(string[] array)
         {
@@ -415,7 +407,6 @@ namespace Prague_Parking1
             Console.WriteLine("Optimization is completed. Press any key to get back to the menu.");
             Console.ReadKey();
         }
-        
         
         //andra och bättre metoden för att dubbelparkera motorcyklar, där vi också har en low och high pointer, och rör oss inåt på vardera sida
         static void DoubleParkAllMotorcycles()
@@ -460,7 +451,6 @@ namespace Prague_Parking1
             return temp;
         }
         
-        
         //en hjälpmetod till FindIndexOfEmptyMc som bestämmer storleken på arrayen jag ska returnera i just FindIndexOfEmptyMc
         //onödigt att ha en temporär array i samma storlek som min parkeringsarray(blev problem då)
         static int SizeOfArrayForHoldingEmptyMcIndex(string[] array)
@@ -476,7 +466,6 @@ namespace Prague_Parking1
             return counter;
         }
 
-       
         // tar bort specifikt fordon
         public static void RemoveVehicle()
         {
@@ -517,7 +506,6 @@ namespace Prague_Parking1
             Console.ReadKey();
         }
 
-       
         // skriver ut fordon som står parkerade
         public static void Print()
         {
@@ -542,51 +530,6 @@ namespace Prague_Parking1
             }
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("\nAvailable slots {0}\n", counter);
-            Console.WriteLine("------------------------------------------------");
-            string choice = "";
-            do
-            {
-                Console.WriteLine("Would you like to see a list of the empty slots?\n" +
-                "Type y for yes, n to get back to the menu\n" +
-                "[Y]\n" +
-                "[N]");
-
-                choice = Console.ReadLine().ToUpper();
-                if (choice == "Y")
-                {
-                    PrintEmptySlots();
-                    Console.ResetColor();
-                    break;
-                }
-                else if (choice == "N")
-                {
-                    Console.WriteLine("As you please, processing backtracking...");
-                    Loading();
-                    Console.Clear();
-                    Console.WriteLine("Press any key to get back to the menu.");
-                    Console.ResetColor();
-                    return;
-                }
-                else
-                {
-                    Console.WriteLine("Please type 'y' or 'n'");
-                    Console.Clear();
-                }
-            } while (choice != "Y" || choice != "N");
-            
-        }
-        static void PrintEmptySlots()
-        {
-            Console.Clear();
-            Console.ForegroundColor = ConsoleColor.Green;
-            for (int i = 0; i < parkingSpots.Length; i++)
-            {
-                if(parkingSpots[i] == null)
-                {
-                    Console.WriteLine("Empty slot: {0}", i + 1);
-                }
-            }
-            Console.WriteLine("Press any key to get back.");
             Console.ResetColor();
         }
         
@@ -603,15 +546,6 @@ namespace Prague_Parking1
                    __/ |                                           __/ | 
                   |___/                                           |___/");
             Console.WriteLine("--------------------------------------------------------------------------------");
-        }
-
-        public static void Loading()
-        {
-            for (int i = 10; i >= 0; i--)
-            {
-                Console.Write($"\rLoading: {i}%   ");
-                Thread.Sleep(200);
-            }
         }
 
         // för "dramtisk laddning", för alla sånnna här system "laggar" 
