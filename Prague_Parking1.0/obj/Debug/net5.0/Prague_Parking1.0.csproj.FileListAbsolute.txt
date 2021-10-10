@@ -1,0 +1,15 @@
+C:\Users\Admin\source\repos\Prague_Parking1_App\Prague_Parking1.0\obj\Debug\net5.0\Prague_Parking1.0.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Admin\source\repos\Prague_Parking1_App\Prague_Parking1.0\obj\Debug\net5.0\Prague_Parking1.0.AssemblyInfoInputs.cache
+C:\Users\Admin\source\repos\Prague_Parking1_App\Prague_Parking1.0\obj\Debug\net5.0\Prague_Parking1.0.AssemblyInfo.cs
+C:\Users\Admin\source\repos\Prague_Parking1_App\Prague_Parking1.0\obj\Debug\net5.0\Prague_Parking1.0.csproj.CoreCompileInputs.cache
+C:\Users\Admin\source\repos\Prague_Parking1_App\Prague_Parking1.0\bin\Debug\net5.0\Prague_Parking1.0.exe
+C:\Users\Admin\source\repos\Prague_Parking1_App\Prague_Parking1.0\bin\Debug\net5.0\Prague_Parking1.0.deps.json
+C:\Users\Admin\source\repos\Prague_Parking1_App\Prague_Parking1.0\bin\Debug\net5.0\Prague_Parking1.0.runtimeconfig.json
+C:\Users\Admin\source\repos\Prague_Parking1_App\Prague_Parking1.0\bin\Debug\net5.0\Prague_Parking1.0.runtimeconfig.dev.json
+C:\Users\Admin\source\repos\Prague_Parking1_App\Prague_Parking1.0\bin\Debug\net5.0\Prague_Parking1.0.dll
+C:\Users\Admin\source\repos\Prague_Parking1_App\Prague_Parking1.0\bin\Debug\net5.0\ref\Prague_Parking1.0.dll
+C:\Users\Admin\source\repos\Prague_Parking1_App\Prague_Parking1.0\bin\Debug\net5.0\Prague_Parking1.0.pdb
+C:\Users\Admin\source\repos\Prague_Parking1_App\Prague_Parking1.0\obj\Debug\net5.0\Prague_Parking1.0.dll
+C:\Users\Admin\source\repos\Prague_Parking1_App\Prague_Parking1.0\obj\Debug\net5.0\ref\Prague_Parking1.0.dll
+C:\Users\Admin\source\repos\Prague_Parking1_App\Prague_Parking1.0\obj\Debug\net5.0\Prague_Parking1.0.pdb
+C:\Users\Admin\source\repos\Prague_Parking1_App\Prague_Parking1.0\obj\Debug\net5.0\Prague_Parking1.0.genruntimeconfig.cache
