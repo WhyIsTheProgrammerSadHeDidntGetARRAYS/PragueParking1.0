@@ -181,7 +181,6 @@ namespace Prague_Parking1
             Console.WriteLine("Not spots available, sorry!");
         }
 
-       
         // flyttar fordon
         public static void Move()
         {
@@ -330,7 +329,7 @@ namespace Prague_Parking1
         }
         
         // kollar ifall angiven parkeringsplats är tom
-        public static bool EmptySpot(int pos)//, string regNumber)
+        public static bool EmptySpot(int pos)
         {
             if (parkingSpots[pos] == null) 
             {
