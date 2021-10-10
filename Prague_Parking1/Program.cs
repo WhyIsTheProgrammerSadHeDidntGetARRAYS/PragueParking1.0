@@ -505,7 +505,7 @@ namespace Prague_Parking1
             Console.ReadKey();
         }
 
-        // skriver ut fordon som står parkerade
+        // skriver ut fordon som står parkerade 
         public static void Print()
         {
             Console.Clear();
