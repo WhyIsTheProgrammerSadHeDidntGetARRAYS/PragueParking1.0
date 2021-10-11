@@ -55,7 +55,8 @@ namespace Prague_Parking1
                         break;
 
                     case "4":
-                        Print();
+                        //Print();
+                        PrintParkedVehicles();
                         Console.ReadKey();
                         break;
 
@@ -423,13 +424,12 @@ namespace Prague_Parking1
             while(low < high)
             {
                 //flyttar över index från the high end ifrån temp array till low end(sedan ökar vi low pointer, och minskar high pointer) 
-                Console.WriteLine("{0} gets joined by {1} at position {2}", parkingSpots[temp[low]], parkingSpots[temp[high]]);
                 parkingSpots[temp[low]] += "|" + parkingSpots[temp[high]];
                 parkingSpots[temp[high]] = null;
                 low++;
                 high--;
             }
-            Console.WriteLine("Double parked as many motorcycles as possible!");
+            Console.WriteLine("Double parked as many motorcycles as possible");
             Console.ReadKey();
         }
 
@@ -505,8 +505,24 @@ namespace Prague_Parking1
             Console.ReadKey();
         }
 
+        //static void Print()
+        //{
+        //    Console.WriteLine("Overview of the parkinglot");
+        //    Console.WriteLine("[1] Print parked vehicles\n" +
+        //        "[2] Print empty slots");
+        //    string choice = Console.ReadLine();
+        //    if(choice == "1")
+        //    {
+        //        PrintParkedVehicles();
+        //    }
+        //    else if(choice == "2")
+        //    {
+        //        ListOfEmptySpots();
+        //    }
+        //}
+
         // skriver ut fordon som står parkerade 
-        public static void Print()
+        public static void PrintParkedVehicles()
         {
             Console.Clear();
             LoadingPercentage();
