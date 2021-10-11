@@ -424,12 +424,13 @@ namespace Prague_Parking1
             while(low < high)
             {
                 //flyttar över index från the high end ifrån temp array till low end(sedan ökar vi low pointer, och minskar high pointer) 
+                Console.WriteLine("{0} gets joined by {1}", parkingSpots[temp[low]], parkingSpots[temp[high]]);
                 parkingSpots[temp[low]] += "|" + parkingSpots[temp[high]];
                 parkingSpots[temp[high]] = null;
                 low++;
                 high--;
             }
-            Console.WriteLine("Double parked as many motorcycles as possible");
+            Console.WriteLine("Double parked as many motorcycles as possible!");
             Console.ReadKey();
         }
 
